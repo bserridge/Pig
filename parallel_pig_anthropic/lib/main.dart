@@ -114,12 +114,12 @@ class _GameScreenState extends State<GameScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Color(0xFFFFA500)), // Orange
+                    style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFFFA500)), // Orange
                     onPressed: rollDice,
                     child: Text('Roll'),
                   ),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Color(0xFFFF6347)), // Tomato Red
+                    style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFFF6347)), // Tomato Red
                     onPressed: hold,
                     child: Text('Hold'),
                   ),
