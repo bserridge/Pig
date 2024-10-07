@@ -52,7 +52,7 @@ class DicePainter extends CustomPainter {
     // Draw pips based on dice value
     switch (value) {
       case 1:
-        _drawPip(canvas, size, 0.5, 0.5, size.width * 0.15, paint);
+        _drawPigNose(canvas, size, 0.5, 0.5, size.width * 0.2, paint);
         break;
       case 2:
         _drawPip(canvas, size, 0.3, 0.3, size.width * 0.1, paint);
@@ -89,11 +89,16 @@ class DicePainter extends CustomPainter {
 
   void _drawPip(Canvas canvas, Size size, double x, double y, double radius, Paint paint) {
     canvas.drawCircle(Offset(size.width * x, size.height * y), radius, paint);
+  }
+
+  void _drawPigNose(Canvas canvas, Size size, double x, double y, double radius, Paint paint) {
+    // Main nose circle
+    canvas.drawCircle(Offset(size.width * x, size.height * y), radius, paint);
     
-    // Draw a small snout in each pip
+    // Nostrils
     paint.color = Color(0xFFFF1493); // Deep pink
-    canvas.drawCircle(Offset(size.width * x - radius * 0.3, size.height * y), radius * 0.2, paint);
-    canvas.drawCircle(Offset(size.width * x + radius * 0.3, size.height * y), radius * 0.2, paint);
+    canvas.drawCircle(Offset(size.width * x - radius * 0.4, size.height * y), radius * 0.25, paint);
+    canvas.drawCircle(Offset(size.width * x + radius * 0.4, size.height * y), radius * 0.25, paint);
   }
 
   @override
