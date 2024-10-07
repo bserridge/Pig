@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'game_screen.dart';  // Make sure to create this file if you haven't already
+import 'parallel_pig_logo.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -23,6 +24,9 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 50),
+
+              /*
+              // removing the placeholder logo (replacement is right below this comment)
               Container(
                 width: 150,
                 height: 150,
@@ -37,6 +41,8 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              */
+              ParallelPigLogo(size: 150),
               SizedBox(height: 50),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
