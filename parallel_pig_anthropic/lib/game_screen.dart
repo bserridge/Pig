@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'results_screen.dart';
 
 class GameScreen extends StatefulWidget {
   @override
@@ -61,12 +62,23 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void checkWinCondition() {
-    if (yourScore >= WIN_SCORE) {
+    if (yourScore >= WIN_SCORE || pigScore >= WIN_SCORE) {
       gameOver = true;
-      // Show win message
-    } else if (pigScore >= WIN_SCORE) {
-      gameOver = true;
-      // Show lose message
+      bool youWon = yourScore >= WIN_SCORE;
+      
+      // Navigate to ResultsScreen
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ResultsScreen(
+              yourScore: yourScore,
+              pigScore: pigScore,
+              youWon: youWon,
+            ),
+          ),
+        );
+      });
     }
   }
 
