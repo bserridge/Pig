@@ -49,39 +49,39 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF2E8B57), // Dark Sea Green
+      backgroundColor: const Color(0xFF2E8B57), // Dark Sea Green
       body: SafeArea(
         child: Column(
           children: <Widget>[
             Container(
-              color: Color(0xFFFFD700), // Yellow
+              color: const Color(0xFFFFD700), // Yellow
               height: 70,
-              child: Center(child: Text('Parallel Pig', style: TextStyle(fontSize: 24))),
+              child: const Center(child: Text('Parallel Pig', style: TextStyle(fontSize: 24))),
             ),
             Row(
               children: [
                 Expanded(
                   child: Container(
-                    color: Color(0xFFFFC0CB), // Pink
+                    color: const Color(0xFFFFC0CB), // Pink
                     height: 100,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Your score'),
-                        Text('$yourScore', style: TextStyle(fontSize: 24)),
+                        const Text('Your score'),
+                        Text('$yourScore', style: const TextStyle(fontSize: 24)),
                       ],
                     ),
                   ),
                 ),
                 Expanded(
                   child: Container(
-                    color: Color(0xFFFFC0CB), // Pink
+                    color: const Color(0xFFFFC0CB), // Pink
                     height: 100,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Pig's score"),
-                        Text('$pigScore', style: TextStyle(fontSize: 24)),
+                        const Text("Pig's score"),
+                        Text('$pigScore', style: const TextStyle(fontSize: 24)),
                       ],
                     ),
                   ),
@@ -89,7 +89,7 @@ class _GameScreenState extends State<GameScreen> {
               ],
             ),
             Container(
-              color: Color(0xFFFFD700), // Yellow
+              color: const Color(0xFFFFD700), // Yellow
               height: 40,
               child: Center(child: Text('Goal: 100 points | You need: ${100 - yourScore} more to win!')),
             ),
@@ -99,12 +99,12 @@ class _GameScreenState extends State<GameScreen> {
                   width: 200,
                   height: 200,
                   color: Colors.white,
-                  child: Center(child: Text('$diceValue', style: TextStyle(fontSize: 72))),
+                  child: Center(child: Text('$diceValue', style: const TextStyle(fontSize: 72))),
                 ),
               ),
             ),
             Container(
-              color: Color(0xFFFFD700), // Yellow
+              color: const Color(0xFFFFD700), // Yellow
               height: 50,
               child: Center(child: Text('Current Turn: $currentTurn')),
             ),
@@ -114,14 +114,14 @@ class _GameScreenState extends State<GameScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFFFA500)), // Orange
+                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFA500)), // Orange
                     onPressed: rollDice,
-                    child: Text('Roll'),
+                    child: const Text('Roll'),
                   ),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFFF6347)), // Tomato Red
+                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFF6347)), // Tomato Red
                     onPressed: hold,
-                    child: Text('Hold'),
+                    child: const Text('Hold'),
                   ),
                 ],
               ),
