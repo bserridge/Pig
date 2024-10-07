@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 import 'results_screen.dart';
+import 'pig_dice.dart';
 
 class GameScreen extends StatefulWidget {
   @override
@@ -149,6 +150,11 @@ class _GameScreenState extends State<GameScreen> {
               height: 40,
               child: Center(child: Text('Goal: $WIN_SCORE points | You need: ${WIN_SCORE - yourScore} more to win!')),
             ),
+            
+            PigDice(value: diceValue, size: 200),
+
+            /*
+            // removing the old dice display
             Expanded(
               child: Center(
                 child: Container(
@@ -159,6 +165,7 @@ class _GameScreenState extends State<GameScreen> {
                 ),
               ),
             ),
+            */
             Container(
               color: const Color(0xFFFFD700), // Yellow
               height: 50,
