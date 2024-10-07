@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'home_screen.dart';
+import 'package:flutter/services.dart';
 import 'game_screen.dart';
 
 class ResultsScreen extends StatelessWidget {
@@ -67,14 +67,11 @@ class ResultsScreen extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                 ),
                 child: Text(
-                  'Return to Home',
+                  'Exit',
                   style: TextStyle(fontSize: 24),
                 ),
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
-                  );
+                  SystemNavigator.pop(); // This will close the app
                 },
               ),
             ],
