@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 void main() => runApp(ParallelPigGame());
 
@@ -21,28 +22,86 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
+  static const int WIN_SCORE = 100;
   int yourScore = 0;
   int pigScore = 0;
   int currentTurn = 0;
   int diceValue = 1;
+  bool isYourTurn = true;
+  bool gameOver = false;
+
+  final Random _random = Random();
 
   void rollDice() {
+    if (gameOver) return;
+
     setState(() {
-      diceValue = 1 + (DateTime.now().millisecondsSinceEpoch % 6);
+      diceValue = _random.nextInt(6) + 1;
       if (diceValue != 1) {
         currentTurn += diceValue;
       } else {
         currentTurn = 0;
-        // Switch to AI turn (to be implemented)
+        switchTurn();
       }
     });
+
+    if (!isYourTurn) {
+      aiTurn();
+    }
   }
 
   void hold() {
+    if (gameOver) return;
+
     setState(() {
-      yourScore += currentTurn;
+      if (isYourTurn) {
+        yourScore += currentTurn;
+      } else {
+        pigScore += currentTurn;
+      }
       currentTurn = 0;
-      // Switch to AI turn (to be implemented)
+      checkWinCondition();
+      if (!gameOver) {
+        switchTurn();
+      }
+    });
+
+    if (!isYourTurn && !gameOver) {
+      aiTurn();
+    }
+  }
+
+  void switchTurn() {
+    isYourTurn = !isYourTurn;
+  }
+
+  void checkWinCondition() {
+    if (yourScore >= WIN_SCORE) {
+      gameOver = true;
+      // Show win message
+    } else if (pigScore >= WIN_SCORE) {
+      gameOver = true;
+      // Show lose message
+    }
+  }
+
+  void aiTurn() {
+    // Simple AI: Roll until reaching 20 points or rolling a 1
+    while (currentTurn < 20) {
+      rollDice();
+      if (diceValue == 1 || gameOver) return;
+    }
+    hold();
+  }
+
+  void resetGame() {
+    setState(() {
+      yourScore = 0;
+      pigScore = 0;
+      currentTurn = 0;
+      diceValue = 1;
+      isYourTurn = true;
+      gameOver = false;
     });
   }
 
@@ -91,7 +150,7 @@ class _GameScreenState extends State<GameScreen> {
             Container(
               color: const Color(0xFFFFD700), // Yellow
               height: 40,
-              child: Center(child: Text('Goal: 100 points | You need: ${100 - yourScore} more to win!')),
+              child: Center(child: Text('Goal: $WIN_SCORE points | You need: ${WIN_SCORE - yourScore} more to win!')),
             ),
             Expanded(
               child: Center(
@@ -115,17 +174,22 @@ class _GameScreenState extends State<GameScreen> {
                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFA500)), // Orange
-                    onPressed: rollDice,
+                    onPressed: isYourTurn && !gameOver ? rollDice : null,
                     child: const Text('Roll'),
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFF6347)), // Tomato Red
-                    onPressed: hold,
+                    onPressed: isYourTurn && !gameOver ? hold : null,
                     child: const Text('Hold'),
                   ),
                 ],
               ),
             ),
+            if (gameOver)
+              ElevatedButton(
+                onPressed: resetGame,
+                child: Text('Play Again'),
+              ),
           ],
         ),
       ),
