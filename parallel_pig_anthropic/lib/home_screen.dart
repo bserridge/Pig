@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'game_screen.dart';  // Make sure to create this file if you haven't already
-import 'parallel_pig_logo.dart';
+// import 'parallel_pig_logo.dart';
+import 'pig_mascot.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -42,7 +43,9 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               */
-              ParallelPigLogo(size: 200),
+              // ParallelPigLogo(size: 200),
+              // TO DO - replace the emoji list in the ParallelPigLogo widget with the PigMascot widget, so that we get a row of three pig mascots
+              PigMascot(size: 200, isHappy: true),
               SizedBox(height: 50),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
