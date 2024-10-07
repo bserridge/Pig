@@ -42,7 +42,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               */
-              ParallelPigLogo(size: 150),
+              ParallelPigLogo(size: 200),
               SizedBox(height: 50),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
