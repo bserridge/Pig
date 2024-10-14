@@ -48,11 +48,6 @@ class _GameScreenState extends State<GameScreen> {
     }
     currentTurn = 0;
     isYourTurn = !isYourTurn;
-    
-    if (!isYourTurn) {
-      // Trigger AI turn
-      Future.delayed(Duration(milliseconds: 500), aiTurn);
-    }
   }
   
   void switchTurn() {
@@ -87,13 +82,44 @@ class _GameScreenState extends State<GameScreen> {
     // Simple AI: Roll until reaching 20 points or rolling a 1
     if (gameOver) return;
 
-    rollDice();
-
-    if (currentTurn > 20) {
+    void rollAndCheck() {
       setState(() {
-        endTurn();
-      });      
+        isRolling = true;
+        diceValue = _random.nextInt(6) + 1;
+      });
+
+      // Use Future.delayed to allow the UI to update and show the rolling animation
+      Future.delayed(Duration(milliseconds: 500), () {
+        if (diceValue == 1) {
+          setState(() {
+            currentTurn = 0;
+            isRolling = false;
+            isYourTurn = true;
+          });
+        } else {
+          setState(() {
+            currentTurn += diceValue;
+            isRolling = false;
+          });
+
+          if (currentTurn < 20) {
+            // AI decides to roll again
+            rollAndCheck();
+          } else {
+            // AI decides to hold
+            setState(() {
+              pigScore += currentTurn;
+              currentTurn = 0;
+              isYourTurn = true;
+            });
+            checkWinCondition();
+          }
+        }
+      });
     }
+
+    rollAndCheck();
+
   }
 
   void resetGame() {
@@ -119,6 +145,11 @@ class _GameScreenState extends State<GameScreen> {
     });
 
     checkWinCondition();
+
+    if (!isYourTurn && !gameOver) {
+     // Trigger AI turn after a short delay
+      Future.delayed(Duration(milliseconds: 500), aiTurn);
+    }
   }
 
   @override
