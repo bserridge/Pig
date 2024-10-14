@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'game_screen.dart';  // Make sure to create this file if you haven't already
 // import 'parallel_pig_logo.dart';
 import 'pig_mascot.dart';
+import 'farm_background.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -13,6 +14,7 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              FarmBackground(),
               Container(
                 width: 300,
                 height: 150,
