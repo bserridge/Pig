@@ -22,7 +22,7 @@ class _GameScreenState extends State<GameScreen> {
   final Random _random = Random();
 
   void rollDice() {
-    if (gameOver || isRolling) return;
+    if (gameOver || !isYourTurn || isRolling) return;
 
     setState(() {
       isRolling = true;
@@ -31,33 +31,40 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void hold() {
-    if (gameOver) return;
+    if (gameOver || !isYourTurn || isRolling) return;
 
     setState(() {
-      if (isYourTurn) {
-        yourScore += currentTurn;
-      } else {
-        pigScore += currentTurn;
-      }
-      currentTurn = 0;
-      checkWinCondition();
-      if (!gameOver) {
-        switchTurn();
-      }
+      endTurn();
     });
 
-    if (!isYourTurn && !gameOver) {
-      aiTurn();
-    }
+    checkWinCondition();
   }
 
+  void endTurn() {
+    if (isYourTurn) {
+      yourScore += currentTurn;
+    } else {
+      pigScore += currentTurn;
+    }
+    currentTurn = 0;
+    isYourTurn = !isYourTurn;
+    
+    if (!isYourTurn) {
+      // Trigger AI turn
+      Future.delayed(Duration(milliseconds: 500), aiTurn);
+    }
+  }
+  
   void switchTurn() {
     isYourTurn = !isYourTurn;
   }
 
   void checkWinCondition() {
     if (yourScore >= WIN_SCORE || pigScore >= WIN_SCORE) {
-      gameOver = true;
+      setState(() {
+        gameOver = true;
+      });
+    
       bool youWon = yourScore >= WIN_SCORE;
       
       // Navigate to ResultsScreen
@@ -78,11 +85,15 @@ class _GameScreenState extends State<GameScreen> {
 
   void aiTurn() {
     // Simple AI: Roll until reaching 20 points or rolling a 1
-    while (currentTurn < 20) {
-      rollDice();
-      if (diceValue == 1 || gameOver) return;
+    if (gameOver) return;
+
+    rollDice();
+
+    if (currentTurn > 20) {
+      setState(() {
+        endTurn();
+      });      
     }
-    hold();
   }
 
   void resetGame() {
@@ -103,14 +114,11 @@ class _GameScreenState extends State<GameScreen> {
       if (diceValue != 1) {
         currentTurn += diceValue;
       } else {
-        currentTurn = 0;
-        switchTurn();
+        endTurn();
       }
     });
 
-    if (!isYourTurn && !gameOver) {
-      aiTurn();
-    }
+    checkWinCondition();
   }
 
   @override
