@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'results_screen.dart';
 import 'pig_dice.dart';
+import 'pig_themed_button.dart';
 
 class GameScreen extends StatefulWidget {
   @override
@@ -176,6 +177,22 @@ class _GameScreenState extends State<GameScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                  PigThemedButton(
+                    text: 'Roll',
+                    onPressed: isYourTurn && !gameOver ? rollDice : null,
+                    color: Color(0xFFFFA500), // Orange
+                    width: 140,
+                    height: 60,
+                  ),
+                  PigThemedButton(
+                    text: 'Hold',
+                    onPressed: isYourTurn && !gameOver ? hold : null,
+                    color: Color(0xFFFF6347), // Tomato Red
+                    width: 140,
+                    height: 60,
+                  ),
+                  /* 
+                  // removing the old buttons
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFA500)), // Orange
                     onPressed: isYourTurn && !gameOver ? rollDice : null,
@@ -186,6 +203,8 @@ class _GameScreenState extends State<GameScreen> {
                     onPressed: isYourTurn && !gameOver ? hold : null,
                     child: const Text('Hold'),
                   ),
+                  */
+
                 ],
               ),
             ),
