@@ -15,27 +15,19 @@ class _GameScreenState extends State<GameScreen> {
   int pigScore = 0;
   int currentTurn = 0;
   int diceValue = 1;
+  bool isRolling = false;
   bool isYourTurn = true;
   bool gameOver = false;
 
   final Random _random = Random();
 
   void rollDice() {
-    if (gameOver) return;
+    if (gameOver || isRolling) return;
 
     setState(() {
+      isRolling = true;
       diceValue = _random.nextInt(6) + 1;
-      if (diceValue != 1) {
-        currentTurn += diceValue;
-      } else {
-        currentTurn = 0;
-        switchTurn();
-      }
     });
-
-    if (!isYourTurn) {
-      aiTurn();
-    }
   }
 
   void hold() {
@@ -104,6 +96,23 @@ class _GameScreenState extends State<GameScreen> {
     });
   }
 
+  void onRollComplete() {
+    setState(() {
+      isRolling = false;
+      
+      if (diceValue != 1) {
+        currentTurn += diceValue;
+      } else {
+        currentTurn = 0;
+        switchTurn();
+      }
+    });
+
+    if (!isYourTurn && !gameOver) {
+      aiTurn();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,7 +161,15 @@ class _GameScreenState extends State<GameScreen> {
               child: Center(child: Text('Goal: $WIN_SCORE points | You need: ${WIN_SCORE - yourScore} more to win!')),
             ),
             
-            PigDice(value: diceValue, size: 200),
+            // removing the old dice display
+            // PigDice(value: diceValue, size: 200),
+
+            // here's the new code
+            AnimatedPigDice(
+              value: diceValue,
+              size: 200,
+              onRollComplete: onRollComplete,
+            ),
 
             /*
             // removing the old dice display
@@ -196,12 +213,12 @@ class _GameScreenState extends State<GameScreen> {
                   
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFA500)), // Orange
-                    onPressed: isYourTurn && !gameOver ? rollDice : null,
+                    onPressed: isYourTurn && !gameOver && !isRolling ? rollDice : null,
                     child: const Text('Roll'),
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFF6347)), // Tomato Red
-                    onPressed: isYourTurn && !gameOver ? hold : null,
+                    onPressed: isYourTurn && !gameOver && !isRolling ? hold : null,
                     child: const Text('Hold'),
                   ),
                 ],

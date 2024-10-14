@@ -1,4 +1,85 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
+
+class AnimatedPigDice extends StatefulWidget {
+  final int value;
+  final double size;
+  final VoidCallback onRollComplete;
+
+  AnimatedPigDice({
+    required this.value,
+    this.size = 200,
+    required this.onRollComplete,
+  });
+
+  @override
+  _AnimatedPigDiceState createState() => _AnimatedPigDiceState();
+}
+
+class _AnimatedPigDiceState extends State<AnimatedPigDice> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  late ValueNotifier<int> _displayedValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _displayedValue = ValueNotifier(1);
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+
+    _controller.addListener(() {
+      if (_controller.value < 0.8) {
+        _displayedValue.value = Random().nextInt(6) + 1;
+      } else {
+        _displayedValue.value = widget.value;
+      }
+    });
+
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        widget.onRollComplete();
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(AnimatedPigDice oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.value != oldWidget.value) {
+      _controller.forward(from: 0.0);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Transform.rotate(
+          angle: _animation.value * 2 * pi,
+          child: ValueListenableBuilder<int>(
+            valueListenable: _displayedValue,
+            builder: (context, value, child) {
+              return PigDice(value: value, size: widget.size);
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _displayedValue.dispose();
+    super.dispose();
+  }
+}
 
 class PigDice extends StatelessWidget {
   final int value;
