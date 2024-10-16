@@ -26,31 +26,38 @@ class _GameScreenState extends State<GameScreen> {
     assert(!gameOver); // we check this before calling rollDice
     assert(!isRolling); // we check this before calling rollDice
 
+    print("Rolling dice...");
+
     // prior code returned if !isYourTurn but I think we should use this function for when it's the pig's turn too
 
     setState(() {
       isRolling = true;
       diceValue = _random.nextInt(6) + 1;
+      print("We rolled a $diceValue");
     });
+
+    onRollComplete();
   }
 
   void hold() {
     
-    assert (!gameOver); // we check this before calling hold
-    assert (!isRolling); // we check this before calling hold
+    assert(!gameOver); // we check this before calling hold
+    assert(!isRolling); // we check this before calling hold
 
     endTurn();
 
     checkWinCondition();
 
     if (!isYourTurn) {
-      // Trigger AI turn after a short delay
       aiTurn();
     }
 
   }
 
   void endTurn() {
+    
+    print("Now it's the other player's turn");
+
     setState(() {
       isRolling = false;
     
@@ -64,12 +71,6 @@ class _GameScreenState extends State<GameScreen> {
     });
   }
   
-  /* this function is not used???
-  void switchTurn() {
-    isYourTurn = !isYourTurn;
-  }
-*/
-
   void checkWinCondition() {
     if (yourScore >= WIN_SCORE || pigScore >= WIN_SCORE) {
       setState(() {
@@ -99,10 +100,14 @@ class _GameScreenState extends State<GameScreen> {
 
     assert(!gameOver); // we check this before calling aiTurn
 
-    if (currentTurn < 20) {
-      Future.delayed(Duration(milliseconds: 1000), rollDice);
+    if (pigScore + currentTurn >= WIN_SCORE) {
+      Future.delayed(Duration(milliseconds: 1000), hold);
     } else {
-      hold();
+      if (currentTurn < 20) {
+        Future.delayed(Duration(milliseconds: 1000), rollDice);
+      } else {
+        Future.delayed(Duration(milliseconds: 1000), hold);
+      }
     }
   }
 
@@ -126,13 +131,14 @@ class _GameScreenState extends State<GameScreen> {
       
       if (diceValue != 1) {
         currentTurn += diceValue;
+        print("Now our score is up to $currentTurn");
+        checkWinCondition();
       } else {
+        print("Oops we rolled a 1");
         currentTurn = 0;
         endTurn();
       }
     });
-
-    checkWinCondition();
 
     if (!isYourTurn && !gameOver) {
      // Trigger AI turn
@@ -187,30 +193,18 @@ class _GameScreenState extends State<GameScreen> {
               height: 40,
               child: Center(child: Text('Goal: $WIN_SCORE points | You need: ${WIN_SCORE - yourScore} more to win!')),
             ),
-            
-            // removing the old dice display
-            // PigDice(value: diceValue, size: 200),
 
-            // here's the new code
+/*            
             AnimatedPigDice(
               value: diceValue,
-              size: 200,
+              size: 150,
               onRollComplete: onRollComplete,
             ),
-
-            /*
-            // removing the old dice display
-            Expanded(
-              child: Center(
-                child: Container(
-                  width: 200,
-                  height: 200,
-                  color: Colors.white,
-                  child: Center(child: Text('$diceValue', style: const TextStyle(fontSize: 72))),
-                ),
-              ),
-            ),
+            
             */
+
+            PigDice(value: diceValue, size: 150),
+
             Container(
               color: const Color(0xFFFFD700), // Yellow
               height: 50,
@@ -220,24 +214,7 @@ class _GameScreenState extends State<GameScreen> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  /* commenting out the PigThemedButtons for now
-                  PigThemedButton(
-                    text: 'Roll',
-                    onPressed: isYourTurn && !gameOver ? rollDice : () {},
-                    color: Color(0xFFFFA500), // Orange
-                    width: 140,
-                    height: 60,
-                  ),
-                  PigThemedButton(
-                    text: 'Hold',
-                    onPressed: isYourTurn && !gameOver ? hold : () {},
-                    color: Color(0xFFFF6347), // Tomato Red
-                    width: 140,
-                    height: 60,
-                  ),
-                  */
-                  
+                children: [          
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFA500)), // Orange
                     onPressed: isYourTurn && !gameOver && !isRolling ? rollDice : null,
