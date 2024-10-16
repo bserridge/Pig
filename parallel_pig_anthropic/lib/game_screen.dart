@@ -22,7 +22,11 @@ class _GameScreenState extends State<GameScreen> {
   final Random _random = Random();
 
   void rollDice() {
-    if (gameOver || !isYourTurn || isRolling) return;
+    
+    assert(!gameOver); // we check this before calling rollDice
+    assert(!isRolling); // we check this before calling rollDice
+
+    // prior code returned if !isYourTurn but I think we should use this function for when it's the pig's turn too
 
     setState(() {
       isRolling = true;
@@ -31,28 +35,40 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void hold() {
-    if (gameOver || !isYourTurn || isRolling) return;
+    
+    assert (!gameOver); // we check this before calling hold
+    assert (!isRolling); // we check this before calling hold
 
-    setState(() {
-      endTurn();
-    });
+    endTurn();
 
     checkWinCondition();
+
+    if (!isYourTurn) {
+      // Trigger AI turn after a short delay
+      aiTurn();
+    }
+
   }
 
   void endTurn() {
-    if (isYourTurn) {
-      yourScore += currentTurn;
-    } else {
-      pigScore += currentTurn;
-    }
-    currentTurn = 0;
-    isYourTurn = !isYourTurn;
+    setState(() {
+      isRolling = false;
+    
+      if (isYourTurn) {
+        yourScore += currentTurn;
+      } else {
+        pigScore += currentTurn;
+      }
+      currentTurn = 0;
+      isYourTurn = !isYourTurn;
+    });
   }
   
+  /* this function is not used???
   void switchTurn() {
     isYourTurn = !isYourTurn;
   }
+*/
 
   void checkWinCondition() {
     if (yourScore >= WIN_SCORE || pigScore >= WIN_SCORE) {
@@ -80,46 +96,14 @@ class _GameScreenState extends State<GameScreen> {
 
   void aiTurn() {
     // Simple AI: Roll until reaching 20 points or rolling a 1
-    if (gameOver) return;
 
-    void rollAndCheck() {
-      setState(() {
-        isRolling = true;
-        diceValue = _random.nextInt(6) + 1;
-      });
+    assert(!gameOver); // we check this before calling aiTurn
 
-      // Use Future.delayed to allow the UI to update and show the rolling animation
-      Future.delayed(Duration(milliseconds: 500), () {
-        if (diceValue == 1) {
-          setState(() {
-            currentTurn = 0;
-            isRolling = false;
-            isYourTurn = true;
-          });
-        } else {
-          setState(() {
-            currentTurn += diceValue;
-            isRolling = false;
-          });
-
-          if (currentTurn < 20) {
-            // AI decides to roll again
-            rollAndCheck();
-          } else {
-            // AI decides to hold
-            setState(() {
-              pigScore += currentTurn;
-              currentTurn = 0;
-              isYourTurn = true;
-            });
-            checkWinCondition();
-          }
-        }
-      });
+    if (currentTurn < 20) {
+      Future.delayed(Duration(milliseconds: 1000), rollDice);
+    } else {
+      hold();
     }
-
-    rollAndCheck();
-
   }
 
   void resetGame() {
@@ -134,12 +118,16 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void onRollComplete() {
+    
+    assert(diceValue > 0);
+
     setState(() {
       isRolling = false;
       
       if (diceValue != 1) {
         currentTurn += diceValue;
       } else {
+        currentTurn = 0;
         endTurn();
       }
     });
@@ -147,8 +135,8 @@ class _GameScreenState extends State<GameScreen> {
     checkWinCondition();
 
     if (!isYourTurn && !gameOver) {
-     // Trigger AI turn after a short delay
-      Future.delayed(Duration(milliseconds: 500), aiTurn);
+     // Trigger AI turn
+      aiTurn();
     }
   }
 
@@ -256,7 +244,7 @@ class _GameScreenState extends State<GameScreen> {
                     child: const Text('Roll'),
                   ),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFF6347)), // Tomato Red
+                    style: ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(11, 212, 188, 1)), // Teal (Rebeca's idea)
                     onPressed: isYourTurn && !gameOver && !isRolling ? hold : null,
                     child: const Text('Hold'),
                   ),
