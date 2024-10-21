@@ -48,10 +48,10 @@ class _GameScreenState extends State<GameScreen> {
 
     checkWinCondition();
 
-    if (!isYourTurn) {
+    if (!isYourTurn && !gameOver) {
+      // Trigger AI turn
       aiTurn();
     }
-
   }
 
   void endTurn() {
