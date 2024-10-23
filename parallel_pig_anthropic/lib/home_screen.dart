@@ -3,6 +3,7 @@ import 'game_screen.dart';  // Make sure to create this file if you haven't alre
 // import 'parallel_pig_logo.dart';
 import 'pig_mascot.dart';
 // import 'farm_background.dart';
+import 'how_to_play_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -58,6 +59,10 @@ class HomeScreen extends StatelessWidget {
                 ),
                 onPressed: () {
                   // TODO: Implement How to Play screen or dialog
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HowToPlayScreen()),
+                  );
                 },
               ),
             ],
