@@ -18,25 +18,22 @@ class _GameScreenState extends State<GameScreen> {
   bool isRolling = false;
   bool isYourTurn = true;
   bool gameOver = false;
+  int rollNumber = 0;
 
   final Random _random = Random();
 
   void rollDice() {
-    
-    assert(!gameOver); // we check this before calling rollDice
-    assert(!isRolling); // we check this before calling rollDice
+    assert(!gameOver);
+    assert(!isRolling);
 
-    print("Rolling dice...");
-
-    // prior code returned if !isYourTurn but I think we should use this function for when it's the pig's turn too
+    print("Rolling dice... (isYourTurn: $isYourTurn, isRolling: $isRolling)");
 
     setState(() {
       isRolling = true;
       diceValue = _random.nextInt(6) + 1;
-      print("We rolled a $diceValue");
+      rollNumber += 1;  // Increment roll number
+      print("We rolled a $diceValue (isRolling now set to true)");
     });
-
-    onRollComplete();
   }
 
   void hold() {
@@ -55,9 +52,8 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void endTurn() {
+    print("endTurn called (before setState: isYourTurn: $isYourTurn, isRolling: $isRolling)");
     
-    print("Now it's the other player's turn");
-
     setState(() {
       isRolling = false;
     
@@ -69,6 +65,8 @@ class _GameScreenState extends State<GameScreen> {
       currentTurn = 0;
       isYourTurn = !isYourTurn;
     });
+
+    print("endTurn finished (after setState: isYourTurn: $isYourTurn, isRolling: $isRolling)");
   }
   
   void checkWinCondition() {
@@ -96,17 +94,28 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   void aiTurn() {
-    // Simple AI: Roll until reaching 20 points or rolling a 1
-
-    assert(!gameOver); // we check this before calling aiTurn
+    print("aiTurn called (isYourTurn: $isYourTurn, isRolling: $isRolling)");
+    assert(!gameOver);
 
     if (pigScore + currentTurn >= WIN_SCORE) {
-      Future.delayed(Duration(milliseconds: 1000), hold);
+      print("AI will hold - has winning score");
+      Future.delayed(Duration(milliseconds: 1000), () {
+        print("AI executing hold with winning score");
+        if (!gameOver) hold();  // Add safety check
+      });
     } else {
       if (currentTurn < 20) {
-        Future.delayed(Duration(milliseconds: 1000), rollDice);
+        print("AI will roll - current turn ($currentTurn) < 20");
+        Future.delayed(Duration(milliseconds: 1000), () {
+          print("AI executing roll");
+          if (!gameOver && !isRolling) rollDice();  // Add safety checks (NOTE: THIS IS NEW!)
+        });
       } else {
-        Future.delayed(Duration(milliseconds: 1000), hold);
+        print("AI will hold - reached 20+ points");
+        Future.delayed(Duration(milliseconds: 1000), () {
+          print("AI executing hold at 20+ points");
+          if (!gameOver) hold();  // Add safety check
+        });
       }
     }
   }
@@ -124,6 +133,9 @@ class _GameScreenState extends State<GameScreen> {
 
   void onRollComplete() {
     
+    print("*** onRollComplete starting ***");
+    print("onRollComplete called (before setState: isYourTurn: $isYourTurn, isRolling: $isRolling)");
+    
     assert(diceValue > 0);
 
     setState(() {
@@ -131,17 +143,19 @@ class _GameScreenState extends State<GameScreen> {
       
       if (diceValue != 1) {
         currentTurn += diceValue;
-        print("Now our score is up to $currentTurn");
+        print("Added $diceValue to current turn, now $currentTurn");
         checkWinCondition();
       } else {
-        print("Oops we rolled a 1");
+        print("Rolled a 1, ending turn");
         currentTurn = 0;
         endTurn();
       }
     });
 
+    print("onRollComplete finished (after setState: isYourTurn: $isYourTurn, isRolling: $isRolling)");
+
     if (!isYourTurn && !gameOver) {
-     // Trigger AI turn
+      print("Triggering AI turn from onRollComplete");
       aiTurn();
     }
   }
@@ -194,16 +208,12 @@ class _GameScreenState extends State<GameScreen> {
               child: Center(child: Text('Goal: $WIN_SCORE points | You need: ${WIN_SCORE - yourScore} more to win!')),
             ),
 
-/*            
             AnimatedPigDice(
               value: diceValue,
               size: 150,
               onRollComplete: onRollComplete,
+              rollNumber: rollNumber,
             ),
-            
-            */
-
-            PigDice(value: diceValue, size: 150),
 
             Container(
               color: const Color(0xFFFFD700), // Yellow

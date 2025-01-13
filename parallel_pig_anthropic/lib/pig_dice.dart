@@ -5,11 +5,13 @@ class AnimatedPigDice extends StatefulWidget {
   final int value;
   final double size;
   final VoidCallback onRollComplete;
+  final int rollNumber;
 
   AnimatedPigDice({
     required this.value,
     this.size = 200,
     required this.onRollComplete,
+    required this.rollNumber,
   });
 
   @override
@@ -50,7 +52,8 @@ class _AnimatedPigDiceState extends State<AnimatedPigDice> with SingleTickerProv
   @override
   void didUpdateWidget(AnimatedPigDice oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.value != oldWidget.value) {
+    if (widget.rollNumber != oldWidget.rollNumber) {
+      print("Starting animation for roll number: ${widget.rollNumber} (value: ${widget.value})");
       _controller.forward(from: 0.0);
     }
   }
